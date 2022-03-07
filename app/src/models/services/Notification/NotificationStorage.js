@@ -269,6 +269,27 @@ class NotificationStorage {
       conn?.release();
     }
   }
+
+  static async findAnonymousFlagByBoardNum(boardNum) {
+    let conn;
+
+    try {
+      conn = await mariadb.getConnection();
+
+      const query = `
+        SELECT writer_hidden_flag AS hiddenFlag
+        FROM boards
+        WHERE no = ?`;
+
+      const hiddenFlag = await conn.query(query, [boardNum]);
+
+      return hiddenFlag[0].hiddenFlag;
+    } catch (err) {
+      throw err;
+    } finally {
+      conn?.release();
+    }
+  }
 }
 
 module.exports = NotificationStorage;

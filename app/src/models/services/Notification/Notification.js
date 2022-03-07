@@ -80,6 +80,10 @@ class Notification {
       notiCategoryNum: board.notiCategoryNum,
     };
 
+    const boardHiddenFlag = await this.checkHiddenFlagOfBoard();
+
+    if (boardHiddenFlag === 1) notification.senderName = '익명';
+
     if (clubNum) {
       const { clubName } = await NotificationStorage.findClubInfoByClubNum(
         clubNum
@@ -89,6 +93,16 @@ class Notification {
       notification.url = `clubhome/${clubNum}/notice/${board.no}`;
     }
     return notification;
+  }
+
+  async checkHiddenFlagOfBoard() {
+    const { boardNum } = this.params;
+
+    const hiddenFlag = await NotificationStorage.findAnonymousFlagByBoardNum(
+      boardNum
+    );
+
+    return hiddenFlag;
   }
 
   async createCmtNotification() {
